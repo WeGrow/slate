@@ -2,9 +2,6 @@
 title: API Reference
 
 language_tabs:
-  - shell
-  - ruby
-  - python
   - javascript
 
 toc_footers:
@@ -17,76 +14,110 @@ includes:
 search: true
 ---
 
-# Introduction
+# Resources
 
-Welcome to the Kittn API! You can use our API to access Kittn API endpoints, which can get information on various cats, kittens, and breeds in our database.
+Each resource supports the same basic methods with a strong influence from REST. The hope is to provide a uniform API for any resource type. 
 
-We have language bindings in Shell, Ruby, and Python! You can view code examples in the dark area to the right, and you can switch the programming language of the examples with the tabs in the top right.
+# Users
 
-This example API documentation page was created with [Slate](https://github.com/tripit/slate). Feel free to edit it and use it as a base for your own API's documentation.
+## Users
 
-# Authentication
+A User is always associated with a platform user. The user object will have a `slack_user`, `hipchat_user`, or `ms_user` object attached to it depending on the platform.
 
-> To authorize, use this code:
 
-```ruby
-require 'kittn'
+### The User object.
 
-api = Kittn::APIClient.authorize!('meowmeowmeow')
+> Slack User example.
+
+```json
+{
+	"id": 1,
+	"first_name": "Bob",
+	"last_name": "Dylan",
+	"email": "bob@malibu.com",
+	"slack_user": {
+		"id": "U023BECGF",
+		"name": "bobby",
+		"deleted": false
+	}
+}
 ```
 
-```python
-import kittn
+Key | Type | Description
+--------- | ------- | -------
+id | Integer | 
+first_name | String |
+last_name | String |
+email | String |
+is_deleted | Boolean | 
+slack_user | Object | Associated Slack user.
+ms_user | Object | Associated MS user.
+hipchat_user | Object | Associated Hipchat user.
 
-api = kittn.authorize('meowmeowmeow')
-```
 
-```shell
-# With shell, you can just pass the correct header with each request
-curl "api_endpoint_here"
-  -H "Authorization: meowmeowmeow"
-```
+## Create a user
 
 ```javascript
-const kittn = require('kittn');
 
-let api = kittn.authorize('meowmeowmeow');
+const user = yield this.store.resources.Users.create({
+	slack_user: { } // Platform slack user.
+});
 ```
 
-> Make sure to replace `meowmeowmeow` with your API key.
+### Data Parameters
 
-Kittn uses API keys to allow access to the API. You can register a new Kittn API key at our [developer portal](http://example.com/developers).
+One platform user object must be passed into the `Users.create` method. The raw object from the platform will be translated into a Growbot user inserting an associated platform user object.
 
-Kittn expects for the API key to be included in all API requests to the server in a header that looks like the following:
+Parameter | Type | Description
+--------- | ------- | -----------
+slack_user | Object | Platform object for a Slack user (https://api.slack.com/types/user).
+ms_user | Object | Platform object for a MS user.
+hipchat_user | Object | Platform object for a Hipchat user.
 
-`Authorization: meowmeowmeow`
+## Get a user
 
-<aside class="notice">
-You must replace <code>meowmeowmeow</code> with your personal API key.
-</aside>
+```javascript
+
+// Get a user by id
+const userOne = yield this.store.resources.Users.get({
+	id: 1
+});
+
+// Get a user by slack_user_id
+const userSlack = yield this.store.resources.Users.get({
+	slack_user_id: "U023BECGF"
+});
+
+// Get a user by ms_user_id
+const userSlack = yield this.store.resources.Users.get({
+	ms_user_id: "MSUSERID"
+});
+
+```
+
+### Data Parameters
+
+Similar to the create method, the get method accepts a variety of id types.
+
+Parameter | Type | Description
+--------- | ------- | -----------
+id | Integer | The Growbot ID for a user.
+slack_user_id | String | The Slack ID for a user.
+ms_user_id | String | The MS ID for a user.
+hipchat_user | String | The Hipchat id for a user.
+
+
+
+# SlackUsers
+
+## The Slack user object.
+
+
+# MSUsers
 
 # Kittens
 
 ## Get All Kittens
-
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-api.kittens.get()
-```
-
-```shell
-curl "http://example.com/api/kittens"
-  -H "Authorization: meowmeowmeow"
-```
 
 ```javascript
 const kittn = require('kittn');
@@ -134,25 +165,6 @@ Remember — a happy kitten is an authenticated kitten!
 </aside>
 
 ## Get a Specific Kitten
-
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get(2)
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-api.kittens.get(2)
-```
-
-```shell
-curl "http://example.com/api/kittens/2"
-  -H "Authorization: meowmeowmeow"
-```
 
 ```javascript
 const kittn = require('kittn');
